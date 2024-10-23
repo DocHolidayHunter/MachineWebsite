@@ -1,20 +1,29 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional
 import joblib
 import pandas as pd
-import numpy as np
 
-# Initialize the FastAPI app
+# Initialize FastAPI app
 app = FastAPI()
 
-# Load the trained logistic regression model
+# Configure CORS to allow requests from the frontend (e.g., React app on localhost:3000)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins (for testing; restrict in production)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods (POST, GET, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
+
+# Load the logistic regression model
 try:
-    model = joblib.load('model.joblib')
+    model = joblib.load('logistic_regression_model.joblib')
 except Exception as e:
     raise RuntimeError(f"Error loading model: {str(e)}")
 
-# Define the request body for prediction
+# Define the request body using Pydantic
 class FlightData(BaseModel):
     DepTimeMinutes: int
     CRSArrTimeMinutes: int
@@ -34,10 +43,11 @@ def root():
 @app.post("/predict")
 def predict_delay(data: FlightData):
     try:
-        # Convert input data into a DataFrame
+        # Convert the input data into a DataFrame
         input_df = pd.DataFrame([data.dict()])
-        
-        # Make predictions using the loaded model
+        print("Received Data:", input_df)  # Debugging
+
+        # Make predictions using the model
         prediction = model.predict(input_df)[0]
         probability = model.predict_proba(input_df)[0][1]
 
@@ -48,16 +58,5 @@ def predict_delay(data: FlightData):
         }
         return result
     except Exception as e:
+        print(f"Error: {str(e)}")  # Debugging
         raise HTTPException(status_code=500, detail=f"Error during prediction: {str(e)}")
-
-# Update model endpoint (PUT) - Optional
-@app.put("/update_model/")
-def update_model(model_path: str):
-    """Endpoint to reload the model from a new file path."""
-    global model
-    try:
-        model = joblib.load(model_path)
-        return {"message": "Model updated successfully."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error updating model: {str(e)}")
-
