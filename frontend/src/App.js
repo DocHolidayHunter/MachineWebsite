@@ -1,24 +1,16 @@
 import React, { useState } from 'react';
 import Form from './components/Form';
-import { BarChart, PieChart } from './components/Chart';
+import Charts from './components/Charts';
+import './App.css';
 
 const App = () => {
   const [prediction, setPrediction] = useState(null);
 
-  const handlePrediction = (data) => {
-    setPrediction(data);
-  };
-
   return (
-    <div className="App">
-      <Form onPrediction={handlePrediction} />
-      {prediction && (
-        <>
-          <h3>Prediction Result</h3>
-          <BarChart prediction={prediction} />
-          <PieChart prediction={prediction} />
-        </>
-      )}
+    <div className="min-h-screen bg-gray-100 p-4">
+      <h1 className="text-center text-4xl font-bold mb-6"></h1>
+      <Form onPrediction={setPrediction} />
+      {prediction && <Charts prediction={prediction} />}
     </div>
   );
 };

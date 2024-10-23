@@ -5,6 +5,7 @@ const Form = ({ onPrediction }) => {
   const [formData, setFormData] = useState({
     depTime: '',
     crsArrTime: '',
+    flightDate: '', // New date field
     TaxiIn: 0,
     TaxiOut: 0,
     CarrierDelay: 0,
@@ -12,26 +13,26 @@ const Form = ({ onPrediction }) => {
     NASDelay: 0,
     LateAircraftDelay: 0,
   });
-
   const [error, setError] = useState('');
-  const [prediction, setPrediction] = useState(null);
 
-  // Convert time to minutes from midnight
   const convertTimeToMinutes = (time) => {
     const [hours, minutes] = time.split(':').map(Number);
     return hours * 60 + minutes;
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const getDayOfWeek = (date) => {
+    const day = new Date(date).getDay(); // 0 = Sunday, 6 = Saturday
+    return day;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const transformedData = {
         DepTimeMinutes: convertTimeToMinutes(formData.depTime),
         CRSArrTimeMinutes: convertTimeToMinutes(formData.crsArrTime),
+        FlightDayOfWeek: getDayOfWeek(formData.flightDate), // Send day of week
         TaxiIn: parseFloat(formData.TaxiIn),
         TaxiOut: parseFloat(formData.TaxiOut),
         CarrierDelay: parseFloat(formData.CarrierDelay),
@@ -41,50 +42,63 @@ const Form = ({ onPrediction }) => {
       };
 
       const response = await axios.post('http://localhost:8000/predict', transformedData);
-      setPrediction(response.data);
+      onPrediction(response.data); // Pass the prediction to the parent component
     } catch (err) {
       setError('Error processing prediction. Please try again.');
     }
   };
 
   return (
-    <div>
-      <h2>Flight Delay Prediction</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {prediction && (
-        <div>
-          <p><strong>Prediction:</strong> {prediction.prediction}</p>
-          <p><strong>Probability of Delay:</strong> {prediction.probability_of_delay}</p>
+    <form onSubmit={handleSubmit} className="form-container">
+      <h2 className="form-title">Flight Delay Prediction</h2>
+      {error && <p className="error-message">{error}</p>}
+
+      <div className="input-row">
+        <div className="input-group">
+          <label>Departure Time:</label>
+          <input
+            type="time"
+            name="depTime"
+            onChange={(e) => setFormData({ ...formData, depTime: e.target.value })}
+            required
+          />
         </div>
-      )}
-      <form onSubmit={handleSubmit}>
-        <label>Departure Time</label>
-        <input type="time" name="depTime" onChange={handleChange} required />
 
-        <label>Scheduled Arrival Time</label>
-        <input type="time" name="crsArrTime" onChange={handleChange} required />
+        <div className="input-group">
+          <label>Scheduled Arrival Time:</label>
+          <input
+            type="time"
+            name="crsArrTime"
+            onChange={(e) => setFormData({ ...formData, crsArrTime: e.target.value })}
+            required
+          />
+        </div>
+      </div>
 
-        <label>Taxi In Time (Minutes)</label>
-        <input type="number" name="TaxiIn" min="0" onChange={handleChange} />
+      <div className="input-group">
+        <label>Flight Date:</label>
+        <input
+          type="date"
+          name="flightDate"
+          onChange={(e) => setFormData({ ...formData, flightDate: e.target.value })}
+          required
+        />
+      </div>
 
-        <label>Taxi Out Time (Minutes)</label>
-        <input type="number" name="TaxiOut" min="0" onChange={handleChange} />
+      <div className="input-group">
+        <label>Taxi In (Minutes):</label>
+        <input
+          type="number"
+          name="TaxiIn"
+          min="0"
+          onChange={(e) => setFormData({ ...formData, TaxiIn: e.target.value })}
+        />
+      </div>
 
-        <label>Carrier Delay (Minutes)</label>
-        <input type="number" name="CarrierDelay" min="0" onChange={handleChange} />
-
-        <label>Weather Delay (Minutes)</label>
-        <input type="number" name="WeatherDelay" min="0" onChange={handleChange} />
-
-        <label>NAS Delay (Minutes)</label>
-        <input type="number" name="NASDelay" min="0" onChange={handleChange} />
-
-        <label>Late Aircraft Delay (Minutes)</label>
-        <input type="number" name="LateAircraftDelay" min="0" onChange={handleChange} />
-
-        <button type="submit">Predict</button>
-      </form>
-    </div>
+      <button type="submit" className="submit-button">
+        Predict
+      </button>
+    </form>
   );
 };
 
