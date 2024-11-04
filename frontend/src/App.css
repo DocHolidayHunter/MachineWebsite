@@ -1,83 +1,133 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f4f4f4; /* Light background color for better contrast */
+}
+
 .form-container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .form-title {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  .error-message {
-    color: red;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  
-  .input-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 15px;
-  }
-  
-  .input-group {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .input-group label {
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  input[type='time'],
-  input[type='date'],
-  input[type='number'] {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-  
-  .submit-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .submit-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .charts-container {
-    display: flex;
-    flex-wrap: wrap; /* Ensure it wraps on small screens */
-    gap: 20px;
-    justify-content: center; /* Center the charts horizontally */
-    margin-top: 20px;
-  }
-  
-  .chart-item {
-    flex: 1;
-    min-width: 300px;
-    max-width: 400px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+  max-width: 500px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333; /* Darker color for better readability */
+}
+
+.input-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px; /* Increased gap for better spacing */
+  margin-bottom: 15px;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  margin-bottom: 5px;
+  font-weight: 600; /* Slightly bolder labels */
+  color: #555; /* Medium gray color for labels */
+}
+
+input[type='number'] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600; /* Slightly bolder font */
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+.charts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.chart-item {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+body {
+  background-color: #addfff;
+}
+
+.container {
+  max-width: 600px;
+}
+
+.form-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.card {
+  border-radius: 10px;
+  overflow: hidden;
+}.chart-container {
+  position: relative;
+  height: 400px; /* Adjust height based on available space */
+  width: 100%;
+}
+
+.chart-container {
+  position: relative;
+  height: 400px; /* Adjust height to make charts responsive */
+  width: 100%;
+  max-width: 600px; /* Optional max width for larger screens */
+  margin: 0 auto;
+}
+
+.container {
+  max-width: 800px;
+}
+
+body {
+  background-color: #f4f4f4;
+}
+
+.text-center {
+  color: #333;
+}
+
