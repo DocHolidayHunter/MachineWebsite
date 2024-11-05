@@ -5,8 +5,11 @@ import axios from 'axios';
 function Predictor() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    DepDateTime: '',
-    ArrDateTime: '',
+    DepDate: '',
+    DepHour: '00',
+    DepMinute: '00',
+    ArrHour: '00',
+    ArrMinute: '00',
     TaxiIn: 0.0,
     TaxiOut: 0.0,
     CarrierDelay: 0.0,
@@ -22,23 +25,19 @@ function Predictor() {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === 'DepDateTime' || name === 'ArrDateTime' ? value : parseFloat(value),
+      [name]: name.includes('Delay') || name.includes('Taxi') ? parseFloat(value) : value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Split date and time inputs into separate fields for backend
-    const depDateTime = new Date(formData.DepDateTime);
-    const arrDateTime = new Date(formData.ArrDateTime);
-
     const submissionData = {
-      Date: depDateTime.toISOString().split('T')[0],  // Departure date in YYYY-MM-DD format
-      DepHour: depDateTime.getHours(),
-      DepMinute: depDateTime.getMinutes(),
-      ArrHour: arrDateTime.getHours(),
-      ArrMinute: arrDateTime.getMinutes(),
+      Date: formData.DepDate,
+      DepHour: parseInt(formData.DepHour),
+      DepMinute: parseInt(formData.DepMinute),
+      ArrHour: parseInt(formData.ArrHour),
+      ArrMinute: parseInt(formData.ArrMinute),
       TaxiIn: formData.TaxiIn,
       TaxiOut: formData.TaxiOut,
       CarrierDelay: formData.CarrierDelay,
@@ -55,39 +54,99 @@ function Predictor() {
     }
   };
 
+  const generateTimeOptions = (limit) => Array.from({ length: limit }, (_, i) => i.toString().padStart(2, '0'));
+
   return (
     <div className="container my-5">
       <div className="card shadow-sm">
         <div className="card-body">
           <h1 className="text-center mb-4">Flight Delay Prediction</h1>
-          <button onClick={() => navigate('/')} className="btn btn-primary w-100 mb-3">
-            Go Back to Home
-          </button>
           <form onSubmit={handleSubmit}>
-            {/* Departure Date and Time */}
+            {/* Departure Date */}
             <div className="mb-3">
-              <label className="form-label">Departure Date and Time</label>
+              <label className="form-label">Departure Date</label>
               <input
-                type="datetime-local"
+                type="date"
                 className="form-control"
-                name="DepDateTime"
-                value={formData.DepDateTime}
+                name="DepDate"
+                value={formData.DepDate}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            {/* Scheduled Arrival Date and Time */}
+            {/* Departure Time */}
             <div className="mb-3">
-              <label className="form-label">Scheduled Arrival Date and Time</label>
-              <input
-                type="datetime-local"
-                className="form-control"
-                name="ArrDateTime"
-                value={formData.ArrDateTime}
-                onChange={handleChange}
-                required
-              />
+              <label className="form-label">Departure Time</label>
+              <div className="row">
+                <div className="col">
+                  <select
+                    className="form-select"
+                    name="DepHour"
+                    value={formData.DepHour}
+                    onChange={handleChange}
+                    required
+                  >
+                    {generateTimeOptions(24).map((hour) => (
+                      <option key={hour} value={hour}>
+                        {hour}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col">
+                  <select
+                    className="form-select"
+                    name="DepMinute"
+                    value={formData.DepMinute}
+                    onChange={handleChange}
+                    required
+                  >
+                    {generateTimeOptions(60).map((minute) => (
+                      <option key={minute} value={minute}>
+                        {minute}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Scheduled Arrival Time */}
+            <div className="mb-3">
+              <label className="form-label">Scheduled Arrival Time</label>
+              <div className="row">
+                <div className="col">
+                  <select
+                    className="form-select"
+                    name="ArrHour"
+                    value={formData.ArrHour}
+                    onChange={handleChange}
+                    required
+                  >
+                    {generateTimeOptions(24).map((hour) => (
+                      <option key={hour} value={hour}>
+                        {hour}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col">
+                  <select
+                    className="form-select"
+                    name="ArrMinute"
+                    value={formData.ArrMinute}
+                    onChange={handleChange}
+                    required
+                  >
+                    {generateTimeOptions(60).map((minute) => (
+                      <option key={minute} value={minute}>
+                        {minute}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
 
             {/* Advanced Options Toggle */}
@@ -104,40 +163,49 @@ function Predictor() {
             {/* Advanced Options Fields */}
             {showAdvanced && (
               <div className="advanced-options">
+ {/* Advanced Options Fields */}
+ {showAdvanced && (
+              <div className="advanced-options">
                 <div className="row mb-3">
                   <div className="col-md-6">
-                    <label className="form-label">Taxi In</label>
+                    <label className="form-label">Taxi In (In minutes) </label>
                     <input type="number" className="form-control" name="TaxiIn" value={formData.TaxiIn} onChange={handleChange} />
                   </div>
                   <div className="col-md-6">
-                    <label className="form-label">Taxi Out</label>
+                    <label className="form-label">Taxi Out (In minutes) </label>
                     <input type="number" className="form-control" name="TaxiOut" value={formData.TaxiOut} onChange={handleChange} />
                   </div>
                 </div>
                 <div className="row mb-3">
                   <div className="col-md-6">
-                    <label className="form-label">Carrier Delay</label>
+                    <label className="form-label">Carrier Delay (In minutes)</label>
                     <input type="number" className="form-control" name="CarrierDelay" value={formData.CarrierDelay} onChange={handleChange} />
                   </div>
                   <div className="col-md-6">
-                    <label className="form-label">Weather Delay</label>
+                    <label className="form-label">Weather Delay (In minutes)</label>
                     <input type="number" className="form-control" name="WeatherDelay" value={formData.WeatherDelay} onChange={handleChange} />
                   </div>
                 </div>
                 <div className="row mb-4">
                   <div className="col-md-6">
-                    <label className="form-label">NAS Delay</label>
+                    <label className="form-label">NAS Delay (In minutes) </label>
                     <input type="number" className="form-control" name="NASDelay" value={formData.NASDelay} onChange={handleChange} />
                   </div>
                   <div className="col-md-6">
-                    <label className="form-label">Late Aircraft Delay</label>
+                    <label className="form-label">Late Aircraft Delay (In minutes) </label>
                     <input type="number" className="form-control" name="LateAircraftDelay" value={formData.LateAircraftDelay} onChange={handleChange} />
                   </div>
                 </div>
               </div>
             )}
+              </div>
+            )}
 
             <button className="btn btn-primary w-100 mb-3" type="submit">Predict Delay</button>
+
+            <button onClick={() => navigate('/')} className="btn btn-primary w-100 mb-3">
+              Go Back to Home
+            </button>
           </form>
 
           {result && (
