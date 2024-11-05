@@ -4,6 +4,7 @@ import './App.css';
 import Main from './Main';
 import Predictor from './Predictor';
 import Visuals from './Visuals';
+import About from './About';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/" element={<Main />} />          {/* Main landing page */}
           <Route path="/predictor" element={<Predictor />} />  {/* Predictor page */}
           <Route path="/visuals" element={<Visuals />} />  {/* Visuals page */}
+          <Route path="/About" element={<About />} />  {/* Visuals page */}
         </Routes>
       </div>
     </Router>
